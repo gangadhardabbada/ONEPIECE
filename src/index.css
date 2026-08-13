@@ -1,0 +1,233 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+
+:root {
+  --color-bg: #0A0A0A; /* Deep charcoal / near black */
+  --color-surface: #111111;
+  --color-border: #262626;
+  
+  --color-yellow: #FDE047; /* High contrast yellow */
+  --color-orange: #EA580C; /* Warm orange */
+  --color-pink: #EC4899; /* Controlled pink */
+  
+  --color-text: #F9FAFB; /* Off-white */
+  --color-text-muted: #9CA3AF;
+  
+  --font-sans: 'Inter', -apple-system, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Base Layout */
+.app-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 24px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.app-header {
+  padding: 24px 0 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.app-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--color-text);
+}
+
+.app-subtitle {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--color-yellow);
+}
+.app-subtitle span {
+  display: block;
+}
+
+/* Uploader */
+.uploader {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed var(--color-border);
+  border-radius: 12px;
+  padding: 48px 24px;
+  cursor: pointer;
+  background-color: var(--color-surface);
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+  overflow: hidden;
+}
+
+.uploader:hover, .uploader.drag-active {
+  border-color: var(--color-yellow);
+  background-color: rgba(253, 224, 71, 0.05);
+}
+
+.uploader input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.uploader-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+  pointer-events: none;
+}
+
+.uploader-icon {
+  color: var(--color-yellow);
+  width: 48px;
+  height: 48px;
+}
+
+.uploader-text {
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+.uploader-metadata {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Loader */
+.loader-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+.signal-loader {
+  display: flex;
+  gap: 8px;
+}
+.signal-dot {
+  width: 12px;
+  height: 12px;
+  background-color: var(--color-yellow);
+  border-radius: 50%;
+}
+
+.loader-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-yellow);
+  letter-spacing: 0.05em;
+}
+
+/* Result */
+.result-container {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  align-items: center;
+  width: 100%;
+}
+
+.preview-wrapper {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+.preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 16px;
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background-color: var(--color-yellow);
+  color: var(--color-bg);
+}
+
+.btn-primary:hover {
+  background-color: #fef08a;
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+.btn-secondary:hover {
+  background-color: #1a1a1a;
+  border-color: var(--color-text-muted);
+}
+
+.btn-text {
+  background: transparent;
+  color: var(--color-text-muted);
+  padding: 8px;
+  font-size: 0.875rem;
+}
+.btn-text:hover {
+  color: var(--color-text);
+}
