@@ -1,4 +1,5 @@
 import heic2any from 'heic2any';
+import { removeBackground } from '@imgly/background-removal';
 
 export async function normalizeImageFile(file: File): Promise<Blob> {
   const isHeic = file.type === 'image/heic' || file.name.toLowerCase().endsWith('.heic');
@@ -34,4 +35,16 @@ export function loadImage(blob: Blob): Promise<HTMLImageElement> {
     };
     img.src = url;
   });
+}
+
+export async function removeImageBackground(blob: Blob): Promise<Blob> {
+  try {
+    // The library can take a Blob and returns a Blob
+    const resultBlob = await removeBackground(blob);
+    return resultBlob;
+  } catch (error) {
+    console.error('Background removal failed:', error);
+    // If it fails for some reason (e.g., network error loading model), fallback to original
+    return blob;
+  }
 }

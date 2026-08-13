@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { Upload, Download, Twitter, RefreshDouble } from 'iconoir-react';
 import gsap from 'gsap';
-import { normalizeImageFile, loadImage } from './lib/image/imageNormalization';
+import { normalizeImageFile, loadImage, removeImageBackground } from './lib/image/imageNormalization';
 import { renderFrame } from './lib/image/canvasRenderer';
 import { shareToX, downloadBlob } from './lib/share/exporter';
+import { jsPDF } from 'jspdf';
 import './index.css';
 
 type Step = 'upload' | 'generating' | 'result';
@@ -13,6 +14,10 @@ function App() {
   const [dragActive, setDragActive] = useState(false);
   const [generatedUrl, setGeneratedUrl] = useState<string | null>(null);
   const [generatedBlob, setGeneratedBlob] = useState<Blob | null>(null);
+
+  const [name, setName] = useState('');
+  const [origin, setOrigin] = useState('');
+  const [team, setTeam] = useState('');
 
   const containerRef = useRef<HTMLDivElement>(null);
   const dotsRef = useRef<HTMLDivElement>(null);
@@ -37,8 +42,15 @@ function App() {
     
     try {
       const blob = await normalizeImageFile(file);
-      const img = await loadImage(blob);
-      const finalBlob = await renderFrame(img, { width: 1080, height: 1080 });
+      const bgRemovedBlob = await removeImageBackground(blob);
+      const img = await loadImage(bgRemovedBlob);
+      const finalBlob = await renderFrame(img, { 
+        width: 1800, 
+        height: 1000,
+        name: name || undefined,
+        origin: origin || undefined,
+        team: team || undefined
+      });
       
       const objectUrl = URL.createObjectURL(finalBlob);
       setGeneratedBlob(finalBlob);
@@ -84,8 +96,14 @@ function App() {
   };
 
   const handleDownload = () => {
-    if (generatedBlob) {
-      downloadBlob(generatedBlob, 'HH_GOA_26_Frame.png');
+    if (generatedUrl) {
+      const pdf = new jsPDF({
+        orientation: 'landscape',
+        unit: 'px',
+        format: [1800, 1000]
+      });
+      pdf.addImage(generatedUrl, 'PNG', 0, 0, 1800, 1000);
+      pdf.save('HH_GOA_26_BoardingPass.pdf');
     }
   };
 
@@ -114,23 +132,49 @@ function App() {
       </header>
 
       {step === 'upload' && (
-        <label 
-          className={`uploader ${dragActive ? 'drag-active' : ''}`}
-          onDragOver={onDragOver}
-          onDragLeave={onDragLeave}
-          onDrop={onDrop}
-        >
-          <input 
-            type="file" 
-            accept="image/jpeg, image/png, image/heic"
-            onChange={onFileChange}
-          />
-          <div className="uploader-content">
-            <Upload className="uploader-icon" />
-            <div className="uploader-text">TAP OR DRAG PHOTO</div>
-            <div className="uploader-metadata">JPG · PNG · HEIC</div>
+        <div className="upload-section">
+          <div className="input-group">
+            <input 
+              type="text" 
+              placeholder="Your Name (e.g. JITHEENDER MANAPURAM)" 
+              value={name} 
+              onChange={e => setName(e.target.value)} 
+              className="text-input" 
+            />
+            <input 
+              type="text" 
+              placeholder="Origin Code (e.g. VTZ)" 
+              value={origin} 
+              onChange={e => setOrigin(e.target.value)} 
+              className="text-input" 
+              maxLength={3}
+            />
+            <input 
+              type="text" 
+              placeholder="Team Name (e.g. VERNA VISIONARIES)" 
+              value={team} 
+              onChange={e => setTeam(e.target.value)} 
+              className="text-input" 
+            />
           </div>
-        </label>
+          <label 
+            className={`uploader ${dragActive ? 'drag-active' : ''}`}
+            onDragOver={onDragOver}
+            onDragLeave={onDragLeave}
+            onDrop={onDrop}
+          >
+            <input 
+              type="file" 
+              accept="image/jpeg, image/png, image/heic"
+              onChange={onFileChange}
+            />
+            <div className="uploader-content">
+              <Upload className="uploader-icon" />
+              <div className="uploader-text">TAP OR DRAG PHOTO TO GENERATE</div>
+              <div className="uploader-metadata">JPG · PNG · HEIC</div>
+            </div>
+          </label>
+        </div>
       )}
 
       {step === 'generating' && (
@@ -140,7 +184,12 @@ function App() {
             <div className="signal-dot"></div>
             <div className="signal-dot"></div>
           </div>
-          <div className="loader-text">SIGNAL DETECTED</div>
+          <div className="loader-text" style={{ textAlign: 'center' }}>
+            <div>ANALYZING SIGNAL...</div>
+            <div style={{ fontSize: '1rem', color: 'var(--color-text-muted)', marginTop: '8px', letterSpacing: '0.1em' }}>
+              REMOVING BACKGROUND (THIS MAY TAKE A MOMENT)
+            </div>
+          </div>
         </div>
       )}
 
