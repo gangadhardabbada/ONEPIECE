@@ -228,21 +228,6 @@ function drawChevrons(
   ctx.restore();
 }
 
-function drawBarcode(
-  ctx: CanvasRenderingContext2D,
-  x: number, y: number, w: number, h: number
-) {
-  ctx.save();
-  ctx.fillStyle = C.muted;
-  const bars = 65;
-  const barW = w / bars;
-  for (let i = 0; i < bars; i++) {
-    const thick = Math.random() > 0.4;
-    ctx.fillRect(x + i * barW, y, thick ? barW * 0.7 : barW * 0.3, h);
-  }
-  ctx.restore();
-}
-
 function drawGradientBarcode(
   ctx: CanvasRenderingContext2D,
   x: number, y: number, w: number, h: number,
@@ -385,114 +370,6 @@ function drawStamp(
     ctx.arc(sx, sy, 2.5, 0, Math.PI * 2);
     ctx.fill();
   }
-
-  ctx.restore();
-}
-
-/* ── Fort Illustration (Goa) ──────────────────────────── */
-function drawFort(
-  ctx: CanvasRenderingContext2D,
-  cx: number, cy: number, scale: number,
-  color: string = C.orange
-) {
-  ctx.save();
-  ctx.translate(cx, cy);
-  ctx.scale(scale, scale);
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 1.6;
-  ctx.globalAlpha = 0.85;
-
-  // Ground line
-  ctx.beginPath();
-  ctx.moveTo(-70, 0);
-  ctx.lineTo(70, 0);
-  ctx.stroke();
-
-  // Waves
-  ctx.lineWidth = 1;
-  ctx.globalAlpha = 0.4;
-  for (let w = 0; w < 3; w++) {
-    ctx.beginPath();
-    for (let i = -65; i < 65; i += 12) {
-      ctx.moveTo(i, 4 + w * 5);
-      ctx.quadraticCurveTo(i + 6, 1 + w * 5, i + 12, 4 + w * 5);
-    }
-    ctx.stroke();
-  }
-  ctx.globalAlpha = 0.85;
-  ctx.lineWidth = 1.6;
-
-  // Main wall
-  ctx.beginPath();
-  ctx.moveTo(-55, 0);
-  ctx.lineTo(-55, -28);
-  ctx.lineTo(-42, -28);
-  ctx.lineTo(-42, -37); ctx.lineTo(-33, -37); ctx.lineTo(-33, -28);
-  ctx.lineTo(-20, -28);
-  ctx.lineTo(-20, -37); ctx.lineTo(-11, -37); ctx.lineTo(-11, -28);
-  // Central tower
-  ctx.lineTo(-6, -28); ctx.lineTo(-6, -48);
-  // Dome
-  ctx.quadraticCurveTo(-6, -58, 0, -60);
-  ctx.quadraticCurveTo(6, -58, 6, -48);
-  ctx.lineTo(6, -28);
-  // Right battlements
-  ctx.lineTo(11, -28);
-  ctx.lineTo(11, -37); ctx.lineTo(20, -37); ctx.lineTo(20, -28);
-  ctx.lineTo(33, -28);
-  ctx.lineTo(33, -37); ctx.lineTo(42, -37); ctx.lineTo(42, -28);
-  ctx.lineTo(55, -28);
-  ctx.lineTo(55, 0);
-  ctx.stroke();
-
-  // Gate arch
-  ctx.beginPath();
-  ctx.arc(0, 0, 10, Math.PI, 0);
-  ctx.lineTo(10, 0);
-  ctx.stroke();
-
-  // Tower windows
-  ctx.beginPath();
-  ctx.arc(0, -38, 3, 0, Math.PI * 2);
-  ctx.stroke();
-
-  // Flag on top
-  ctx.beginPath();
-  ctx.moveTo(0, -60);
-  ctx.lineTo(0, -68);
-  ctx.moveTo(0, -68);
-  ctx.lineTo(8, -65);
-  ctx.lineTo(0, -62);
-  ctx.stroke();
-
-  // Palm tree left
-  ctx.beginPath();
-  ctx.moveTo(-72, 0);
-  ctx.quadraticCurveTo(-70, -18, -68, -35);
-  ctx.stroke();
-  // Fronds
-  ctx.beginPath();
-  ctx.moveTo(-68, -35);
-  ctx.quadraticCurveTo(-82, -44, -90, -38);
-  ctx.moveTo(-68, -35);
-  ctx.quadraticCurveTo(-60, -48, -52, -40);
-  ctx.moveTo(-68, -35);
-  ctx.quadraticCurveTo(-72, -50, -68, -52);
-  ctx.stroke();
-
-  // Palm tree right
-  ctx.beginPath();
-  ctx.moveTo(72, 0);
-  ctx.quadraticCurveTo(70, -15, 68, -30);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(68, -30);
-  ctx.quadraticCurveTo(80, -38, 88, -32);
-  ctx.moveTo(68, -30);
-  ctx.quadraticCurveTo(60, -42, 54, -36);
-  ctx.moveTo(68, -30);
-  ctx.quadraticCurveTo(72, -45, 68, -47);
-  ctx.stroke();
 
   ctx.restore();
 }
@@ -777,7 +654,7 @@ type StubIcon = 'doc' | 'team' | 'cal' | 'tag' | 'star';
 
 function drawStubInfoLine(
   ctx: CanvasRenderingContext2D,
-  x: number, y: number, w: number,
+  x: number, y: number,
   label: string, value: string, iconType: StubIcon, isTeam = false
 ) {
   const iconSize = 34;
@@ -1424,20 +1301,20 @@ export async function renderFrame(
   };
 
   // Stub info lines with icons
-  drawStubInfoLine(ctx, stubX, stubY, stubW, 'PASS NO.', '247-24JS', 'doc');
+  drawStubInfoLine(ctx, stubX, stubY, 'PASS NO.', '247-24JS', 'doc');
   stubY += 45;
   drawDottedSep(stubY);
   stubY += 15;
   const teamName = (options.team || 'VERNA VISIONARIES').toUpperCase();
-  drawStubInfoLine(ctx, stubX, stubY, stubW, 'TEAM', teamName, 'team', true);
+  drawStubInfoLine(ctx, stubX, stubY, 'TEAM', teamName, 'team', true);
   stubY += 45;
   drawDottedSep(stubY);
   stubY += 15;
-  drawStubInfoLine(ctx, stubX, stubY, stubW, 'RESIDENCY', '28-31 OCT 2026', 'cal');
+  drawStubInfoLine(ctx, stubX, stubY, 'RESIDENCY', '28-31 OCT 2026', 'cal');
   stubY += 45;
   drawDottedSep(stubY);
   stubY += 15;
-  drawStubInfoLine(ctx, stubX, stubY, stubW, 'EDITION', '052 / 247', 'star');
+  drawStubInfoLine(ctx, stubX, stubY, 'EDITION', '052 / 247', 'star');
   stubY += 55;
 
   // Fort illustration (from icon1.png)

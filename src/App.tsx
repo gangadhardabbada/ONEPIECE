@@ -3,7 +3,7 @@ import { Upload, Download, Twitter, RefreshDouble } from 'iconoir-react';
 import gsap from 'gsap';
 import { normalizeImageFile, loadImage, removeImageBackground } from './lib/image/imageNormalization';
 import { renderFrame } from './lib/image/canvasRenderer';
-import { shareToX, downloadBlob } from './lib/share/exporter';
+import { shareToX } from './lib/share/exporter';
 import { jsPDF } from 'jspdf';
 import './index.css';
 
@@ -13,7 +13,6 @@ function App() {
   const [step, setStep] = useState<Step>('upload');
   const [dragActive, setDragActive] = useState(false);
   const [generatedUrl, setGeneratedUrl] = useState<string | null>(null);
-  const [generatedBlob, setGeneratedBlob] = useState<Blob | null>(null);
 
   const [name, setName] = useState('');
   const [origin, setOrigin] = useState('');
@@ -53,7 +52,6 @@ function App() {
       });
       
       const objectUrl = URL.createObjectURL(finalBlob);
-      setGeneratedBlob(finalBlob);
       setGeneratedUrl(objectUrl);
       
       // Simulate slight delay for dramatic effect if it was too fast
@@ -116,7 +114,6 @@ function App() {
     if (generatedUrl) {
       URL.revokeObjectURL(generatedUrl);
     }
-    setGeneratedBlob(null);
     setGeneratedUrl(null);
     setStep('upload');
   };
